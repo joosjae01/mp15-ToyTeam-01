@@ -11,7 +11,7 @@ public class BulletController : MonoBehaviour, IPoolable
     private Rigidbody _rb;
     private bool _isGrounded;
     private Vector3 _direction;
-    private List<Collider> _hitMonsters = new();
+    private List<MonsterController> _enemies = new();
 
     private void Awake() => CacheComponents();
 
@@ -20,13 +20,13 @@ public class BulletController : MonoBehaviour, IPoolable
         if (_data == null) return;
         if (_data.Type == BulletType.RollingBallBullet && _isGrounded)
         {
-            Collider[] monsters = Physics.OverlapSphere(transform.position, _data.HitRadius, _monsterLayer);
-            foreach (Collider monster in monsters)
+            EnemyManager.Instance.GetEnemies(transform.position, _enemies);
+
+            foreach (MonsterController enemy in _enemies)
             {
-                if (_hitMonsters.Contains(monster)) continue;
-                
-                _hitMonsters.Add(monster);
-                monster.GetComponent<IDamageable>().TakeDamage(_data.Damage);
+                if(Vector3.SqrMagnitude(transform.position - enemy.transform.position) <= _data.HitRadius * _data.HitRadius){
+                    enemy.TakeDamage(_data.Damage);
+                }
             }
         }
     }
@@ -47,7 +47,6 @@ public class BulletController : MonoBehaviour, IPoolable
         _direction = transform.forward;
         _direction.y = 0;
         _direction.Normalize();
-        _hitMonsters.Clear();
 
         StartCoroutine(DisableRoutine());
     }
@@ -68,12 +67,17 @@ public class BulletController : MonoBehaviour, IPoolable
     private void Explode()
     {
         ExplodeSoundOn();
-        
-        Collider[] monsters = Physics.OverlapSphere(transform.position, _data.ExplosionRadius, _monsterLayer);
-        foreach (Collider monster in monsters)
+
+        EnemyManager.Instance.GetEnemies(transform.position, _enemies);
+
+        foreach(MonsterController enemy in _enemies)
         {
-            monster.GetComponent<IDamageable>().TakeDamage(_data.Damage);
+            if(Vector3.SqrMagnitude(transform.position - enemy.Position) <= _data.ExplosionRadius)
+            {
+                enemy.TakeDamage(_data.Damage);
+            }
         }
+
         ReturnToPool();
         GameObject effect = Instantiate(_data.ExplodeEffect);
         effect.transform.position = transform.position;
