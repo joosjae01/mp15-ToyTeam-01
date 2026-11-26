@@ -31,14 +31,13 @@ public class MachineGun : TurretBase
                 Debug.DrawLine(_firePoint.position, hit.point, Color.red);
                 Vector3 target = hit.point;
                 EnemyManager.Instance.GetEnemies(target, _targets);
+                Debug.Log($"검사한 몬스터 수 : {_targets.Count}");
 
-                foreach(MonsterController enemy in _targets)
+                foreach (MonsterController enemy in _targets)
                 {
                     if(Vector3.SqrMagnitude(target - enemy.Position) <= _bulletRadius * _bulletRadius)
                     {
                         enemy.TakeDamage(_bulletDamage);
-                        Debug.Log($"{enemy} : 피해 발생");
-                        break;
                     }
                 }
             }

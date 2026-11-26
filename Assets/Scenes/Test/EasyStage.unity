@@ -733,12 +733,28 @@ PrefabInstance:
       value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 2517998823706628546, guid: 79ff5cbc1c93ee5468bf03cadf6d24c0, type: 3}
+      propertyPath: _fireDelay
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 2517998823706628546, guid: 79ff5cbc1c93ee5468bf03cadf6d24c0, type: 3}
+      propertyPath: _maxBullets
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2517998823706628546, guid: 79ff5cbc1c93ee5468bf03cadf6d24c0, type: 3}
+      propertyPath: _minBullets
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2517998823706628546, guid: 79ff5cbc1c93ee5468bf03cadf6d24c0, type: 3}
+      propertyPath: _spreadAngle
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2517998823706628546, guid: 79ff5cbc1c93ee5468bf03cadf6d24c0, type: 3}
       propertyPath: _bulletDamage
       value: 900
       objectReference: {fileID: 0}
     - target: {fileID: 2517998823706628546, guid: 79ff5cbc1c93ee5468bf03cadf6d24c0, type: 3}
       propertyPath: _bulletRadius
-      value: 0.5
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 5487882738722813262, guid: 79ff5cbc1c93ee5468bf03cadf6d24c0, type: 3}
       propertyPath: m_LocalScale.x
@@ -1042,7 +1058,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03701862a2c20854880336623061eb4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cellSize: 1
+  _cellSize: 0.2
 --- !u!4 &1238874327
 Transform:
   m_ObjectHideFlags: 0
@@ -1550,6 +1566,10 @@ PrefabInstance:
       propertyPath: m_Material
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 1447832100721480067, guid: 09284957794b0d64cbbfdab8c37ac7ae, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2189790600560136450, guid: 09284957794b0d64cbbfdab8c37ac7ae, type: 3}
       propertyPath: m_LocalPosition.x
       value: 3.47
@@ -1628,6 +1648,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5570165642337590409, guid: 09284957794b0d64cbbfdab8c37ac7ae, type: 3}
       propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5603735618436838394, guid: 09284957794b0d64cbbfdab8c37ac7ae, type: 3}
+      propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6208626183434278099, guid: 09284957794b0d64cbbfdab8c37ac7ae, type: 3}
