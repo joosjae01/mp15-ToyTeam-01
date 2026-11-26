@@ -3,10 +3,10 @@ using UnityEngine;
 
 public class SpatialHash<T> where T : ISpatialable
 {
-    private int _cellSize;
+    private float _cellSize;
     private Dictionary<Vector2Int, List<T>> _buckets = new();
 
-    public SpatialHash(int size)
+    public SpatialHash(float size)
     {
         _cellSize = size;
     }
@@ -22,7 +22,7 @@ public class SpatialHash<T> where T : ISpatialable
     public void Insert(T agent)
     {
         int cx = Mathf.FloorToInt(agent.Position.x / _cellSize);
-        int cy = Mathf.FloorToInt(agent.Position.y / _cellSize);
+        int cy = Mathf.FloorToInt(agent.Position.z / _cellSize);
 
         Vector2Int key = new Vector2Int(cx, cy);
 

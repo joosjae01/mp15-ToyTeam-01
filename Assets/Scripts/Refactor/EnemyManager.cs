@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class EnemyManager : MonoBehaviour
 {
-    [SerializeField] private int _cellSize;
+    [SerializeField] private float _cellSize;
 
     private static EnemyManager _instance;
     public static EnemyManager Instance
@@ -31,10 +31,13 @@ public class EnemyManager : MonoBehaviour
         _enemyHash.Clear();
         Flush();
 
+        Debug.Log($"현재 몬스터 수 : {_enemyList.Count}");
+
         foreach(MonsterController enemy in _enemyList)
         {
             _enemyHash.Insert(enemy);
         }
+
 
         foreach(MonsterController enemy in _enemyList)
         {
