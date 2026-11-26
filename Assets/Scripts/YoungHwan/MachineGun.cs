@@ -25,16 +25,19 @@ public class MachineGun : TurretBase
             Vector3 direction = _firePoint.rotation * spread * Vector3.forward;
             Ray ray = new Ray(_firePoint.position, direction);
             RaycastHit hit;
-            if (Physics.SphereCast(ray, _bulletRadius, out hit,  _bulletRange, _targetLayer))
+            if(Physics.Raycast(ray, out hit,_bulletRange, _targetLayer))
             {
-                GameObject hitEffect = Instantiate(_hitEffect);
-                hitEffect.transform.position = hit.point;
-                Destroy(hitEffect, 1f);
-                
-                Collider[] monsters = Physics.OverlapSphere(hit.point, _explosionRadius, _monsterLayer);
-                foreach (Collider monster in monsters)
+                Vector3 target = hit.point;
+                EnemyManager.Instance.GetEnemies(target, _targets);
+
+                foreach(MonsterController enemy in _targets)
                 {
-                    monster.GetComponent<IDamageable>().TakeDamage(_bulletDamage);
+                    if(Vector3.SqrMagnitude(target - enemy.Position) <= _bulletRadius * _bulletRadius)
+                    {
+                        enemy.TakeDamage(_bulletDamage);
+                        Debug.Log($"{enemy} : 피해 발생");
+                        break;
+                    }
                 }
             }
         }
