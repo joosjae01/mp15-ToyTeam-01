@@ -1,4 +1,5 @@
 using UnityEngine;
+using static UnityEngine.UI.Image;
 
 public class MachineGun : TurretBase
 {
@@ -13,9 +14,9 @@ public class MachineGun : TurretBase
     [SerializeField] private float _spreadAngle = 1f;
     [Header("머신건 - 판정")]
     [SerializeField] private float _bulletRange;
-    [SerializeField] private float _bulletRadius = 0.1f;
+    [SerializeField] private float _bulletRadius = 1f;
     [SerializeField] private float _explosionRadius = 0.3f;
-    [SerializeField] private float _bulletDamage = 5f;
+    [SerializeField] private float _bulletDamage = 900f;
     public override void Attack()
     {
         int bullets = Random.Range(_minBullets, _maxBullets + 1);
@@ -25,16 +26,20 @@ public class MachineGun : TurretBase
             Vector3 direction = _firePoint.rotation * spread * Vector3.forward;
             Ray ray = new Ray(_firePoint.position, direction);
             RaycastHit hit;
-            if (Physics.SphereCast(ray, _bulletRadius, out hit,  _bulletRange, _targetLayer))
+            if(Physics.Raycast(ray, out hit,_bulletRange, _targetLayer))
             {
-                GameObject hitEffect = Instantiate(_hitEffect);
-                hitEffect.transform.position = hit.point;
-                Destroy(hitEffect, 1f);
-                
-                Collider[] monsters = Physics.OverlapSphere(hit.point, _explosionRadius, _monsterLayer);
-                foreach (Collider monster in monsters)
+                Debug.DrawLine(_firePoint.position, hit.point, Color.red);
+                Vector3 target = hit.point;
+                EnemyManager.Instance.GetEnemies(target, _targets);
+
+                foreach(MonsterController enemy in _targets)
                 {
-                    monster.GetComponent<IDamageable>().TakeDamage(_bulletDamage);
+                    if(Vector3.SqrMagnitude(target - enemy.Position) <= _bulletRadius * _bulletRadius)
+                    {
+                        enemy.TakeDamage(_bulletDamage);
+                        Debug.Log($"{enemy} : 피해 발생");
+                        break;
+                    }
                 }
             }
         }

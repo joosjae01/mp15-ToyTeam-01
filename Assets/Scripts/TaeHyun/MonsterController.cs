@@ -1,57 +1,46 @@
 using System;
 using UnityEngine;
-public class MonsterController : MonoBehaviour, IDamageable, IPoolable
+public class MonsterController : MonoBehaviour, IDamageable, IPoolable, ISpatialable
 {
     [Header("몬스터 데이터")]
     private MonsterData _monsterData;
-
-    [Header("탄알 레이어")]
-    private LayerMask _bulletLayer;
     
-    // =============== IPoolable 구현 ===============
     public GameObject GameObject { get; set; }
     public ObjectPool Source { get; set; }
+
+    public Vector3 Position { get => transform.position; }
 
     public event Action<MonsterData> OnKilled;
     public event Action<MonsterData> OnNexusArrived;
 
-    private bool _isReturned = true;
-
-    // =============== 유니티 생명 주기 ===============
+    public bool IsReturned = true;
 
     private void Awake() => CacheComponents();
-    private void OnEnable() => _isReturned = false;
-    private void FixedUpdate() => MoveToNexus();
+    private void OnEnable()
+    {
+        IsReturned = false;
+        EnemyManager.Instance.Register(this);
+    }
     private void OnDisable()
     {
-        _isReturned = true;
+        IsReturned = true;
         
         // +
         OnNexusArrived = null;
         OnKilled = null;
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if((_bulletLayer & (1 << other.gameObject.layer)) != 0){
-            TakeDamage(other.GetComponent<BulletData>().Damage);
-        }
+        EnemyManager.Instance.UnRegister(this);
     }
 
     // =============== 기본 이동 로직 ===============
-    private void MoveToNexus()
+    public void Move(float time)
     {
-        //이동 로직을 단순히 앞으로 이동하는 것으로 수정하였습니다. (추후 발판 등 도입)
-        transform.Translate(Vector3.forward * _monsterData.MoveSpeed * Time.deltaTime);
+        transform.Translate(Vector3.forward * _monsterData.MoveSpeed * time);
     }
 
     // =============== Nexus 도착 시 수행할 로직 ===============
     public void ArriveNexus()
     {   
         OnNexusArrived?.Invoke(_monsterData);
-        // OnNexusArrived = null;
-        // OnKilled = null;
-        //gameObject.SetActive(false);
         ReturnToPool();
     }
 
@@ -60,15 +49,11 @@ public class MonsterController : MonoBehaviour, IDamageable, IPoolable
     {
         if (damage >= _monsterData.Health)
         {
-            if (_isReturned)
+            if (IsReturned)
                 return;
             
             _monsterData.Health = 0;
-            
-            // ++
-            if (DecalSpawner.Instance != null)
-                DecalSpawner.Instance.Spawn(_monsterData.Type, transform.position);
-            
+
             OnKilled?.Invoke(_monsterData);
             OnNexusArrived = null;
             OnKilled = null;
@@ -85,7 +70,7 @@ public class MonsterController : MonoBehaviour, IDamageable, IPoolable
     public void ReturnToPool()
     {
         // +++
-        if (_isReturned) 
+        if (IsReturned) 
             return;
 
         Source.Push(this);
@@ -93,8 +78,5 @@ public class MonsterController : MonoBehaviour, IDamageable, IPoolable
 
     // =============== Awake() 초기화 메서드 ===============
 
-    private void CacheComponents()
-    {
-        _monsterData = GetComponent<MonsterData>();
-    }
+    private void CacheComponents() => _monsterData = GetComponent<MonsterData>();
 }
