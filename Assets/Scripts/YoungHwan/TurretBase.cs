@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class TurretBase : MonoBehaviour
@@ -15,6 +16,7 @@ public abstract class TurretBase : MonoBehaviour
     [SerializeField] private float _heatPerShot;
     [SerializeField] private float _coolPerSecond;
     [SerializeField] private float _coolDelay;
+    protected List<MonsterController> _targets = new();
     
     public bool OverHeat => _isOverHeat;
     
